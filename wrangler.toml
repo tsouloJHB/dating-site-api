@@ -1,0 +1,38 @@
+# JustHookups API — Hono on Cloudflare Workers (AGENTS.md §1, §4.2)
+name = "dating-site-api"
+main = "dist/index.mjs"
+compatibility_date = "2025-04-05"
+compatibility_flags = ["nodejs_compat"]
+
+[build]
+command = "pnpm run build"
+cwd = "."
+
+[vars]
+# Override in .dev.vars for local `wrangler dev`
+# Add your Flutter web dev origin (see flutter run output); comma-separated OK
+CORS_ORIGIN = "http://localhost:8787"
+BETTER_AUTH_URL = "http://localhost:8787"
+
+# Secrets (set via `wrangler secret put …` or Alchemy):
+# DATABASE_URL, BETTER_AUTH_SECRET
+
+[[r2_buckets]]
+binding = "MEDIA_BUCKET"
+bucket_name = "dating-site-media"
+
+# Optional: list thumbnails via Cloudflare Image Resizing (same zone; enable in dashboard)
+# MEDIA_LIST_THUMB_WIDTH = "200"
+
+# Optional: Google Sign-In (Better Auth `socialProviders.google`). Use the same
+# Web client ID as Flutter `--dart-define=GOOGLE_WEB_CLIENT_ID=...`.
+# GOOGLE_CLIENT_ID = ""
+# Set secret: wrangler secret put GOOGLE_CLIENT_SECRET
+
+# Google Play Subscriptions (set via `wrangler secret put …` or Alchemy):
+#   GOOGLE_PLAY_SERVICE_ACCOUNT_JSON  – contents of the service-account key JSON
+#   GOOGLE_PLAY_WEBHOOK_SECRET        – shared secret for the Pub/Sub push endpoint
+#   GOOGLE_PLAY_PACKAGE_NAME          – defaults to "com.neonebula.Justhookups"
+#
+# RTDN webhook URL to register in Google Cloud Pub/Sub (push subscription):
+#   https://<worker-host>/api/billing/google-play/webhook?secret=<GOOGLE_PLAY_WEBHOOK_SECRET>
